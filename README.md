@@ -46,10 +46,16 @@
 要求 Go 1.24 或更高版本。完整的 Docker、客户端和登录说明可参考[上游文档](https://github.com/xpzouying/xiaohongshu-mcp)。
 
 ```bash
-git clone <your-fork-url>
+git clone https://github.com/mimi17-shq/xiaohongshu-mcp-reliable.git
 cd xiaohongshu-mcp-reliable
 go build -o xiaohongshu-mcp .
 ./xiaohongshu-mcp -headless=false
+```
+
+也可以从源码构建本分支的 Docker 镜像；本项目目前不发布预构建镜像，避免误把上游镜像当作可靠性分支使用：
+
+```bash
+docker compose -f docker/docker-compose.yml up --build -d
 ```
 
 服务默认监听 `:18060`，MCP Streamable HTTP 端点为：

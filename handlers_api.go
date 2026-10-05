@@ -1,3 +1,4 @@
+// Modified from upstream: points API metadata to this reliability fork.
 package main
 
 import (
@@ -317,7 +318,7 @@ func healthHandler(c *gin.Context) {
 		"status":    "healthy",
 		"service":   "xiaohongshu-mcp",
 		"version":   version,
-		"account":   "github.com/xpzouying/xiaohongshu-mcp",
+		"account":   "github.com/mimi17-shq/xiaohongshu-mcp-reliable",
 		"timestamp": "now",
 	}, "服务正常")
 }

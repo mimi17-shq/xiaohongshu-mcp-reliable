@@ -34,6 +34,12 @@ Preparation baseline: upstream tag `v2.5.5`, commit `a5c8f7799980ba1fdd501999843
 
 - The upstream Cookie deletion implementation remains available internally, but no Cookie deletion route or MCP tool is registered in this fork.
 
+## Independent distribution cleanup
+
+- Removed upstream maintainer instructions, donation artifacts, publishing skills, funding/ownership metadata, and release workflows that were tied to the upstream maintainer's accounts.
+- Docker Compose builds this fork from source instead of pulling the upstream image.
+- API repository metadata points to this fork. The Go module path remains unchanged for source compatibility with the upstream package layout.
+
 ## Tests
 
 - Added task persistence, deduplication, recovery, state-transition, browser-gate, reply-targeting, schema, response-slimming, and verification tests.

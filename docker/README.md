@@ -1,155 +1,56 @@
 # Docker 使用说明
 
-## 0. 重点注意
+本分支目前不发布预构建镜像。请从当前仓库源码构建，避免拉取到不包含可靠性改动的上游镜像。
 
-写在最前面。
-
-- 启动后，会产生一个 `images/` 目录，用于存储发布的图片。它会挂载到 Docker 容器里面。
-  如果要使用本地图片发布的话，请确保图片拷贝到 `./images/` 目录下，并且让 MCP 在发布的时候，指定文件夹为：`/app/images`，否则一定失败。
-- Docker 镜像内置浏览器，并在构建阶段预下载。请挂载 `./data:/app/data`，用于持久化 cookies 和运行数据目录。
-
-## 1. 获取 Docker 镜像
-
-### 1.1 从 Docker Hub 拉取（推荐）
-
-我们提供了预构建的 Docker 镜像，可以直接从 Docker Hub 拉取使用：
+在仓库根目录运行：
 
 ```bash
-# 拉取最新镜像
-docker pull xpzouying/xiaohongshu-mcp
+docker compose -f docker/docker-compose.yml up --build -d
 ```
 
-Docker Hub 地址：[https://hub.docker.com/r/xpzouying/xiaohongshu-mcp](https://hub.docker.com/r/xpzouying/xiaohongshu-mcp)
-
-### 1.2 从阿里云镜像源拉取（国内用户推荐）
-
-国内用户可以使用阿里云容器镜像服务，拉取速度更快：
+查看日志：
 
 ```bash
-# 拉取最新镜像
-docker pull crpi-hocnvtkomt7w9v8t.cn-beijing.personal.cr.aliyuncs.com/xpzouying/xiaohongshu-mcp
+docker compose -f docker/docker-compose.yml logs -f
 ```
 
-### 1.3 自己构建镜像（可选）
-
-在有项目的Dockerfile的目录运行
+停止服务：
 
 ```bash
-docker build -t xpzouying/xiaohongshu-mcp .
+docker compose -f docker/docker-compose.yml stop
 ```
 
-`xpzouying/xiaohongshu-mcp`为镜像名称和版本。
+## 数据与本地图片
 
-<img width="2576" height="874" alt="image" src="https://github.com/user-attachments/assets/fe7e87f1-623f-409f-8b54-e11d380fc7b8" />
+- `docker/data/` 持久化 Cookie、浏览器状态和异步任务状态。这里包含敏感信息，不要提交或分享。
+- `docker/images/` 用于待发布图片。调用 MCP 时，容器内路径应写成 `/app/images/<文件名>`。
+- 服务默认暴露在 `http://localhost:18060/mcp`。
 
-## 2. 手动 Docker Compose
+## 鉴权
 
-> **国内用户提示**：如需使用阿里云镜像源，请修改 `docker-compose.yml` 文件，注释掉 Docker Hub 镜像行，取消阿里云镜像行的注释：
-> ```yaml
-> # image: xpzouying/xiaohongshu-mcp
-> image: crpi-hocnvtkomt7w9v8t.cn-beijing.personal.cr.aliyuncs.com/xpzouying/xiaohongshu-mcp
-> ```
+生产部署应设置随机且足够强的 Bearer Token：
 
 ```bash
-# 注意：在 docker-compose.yml 文件的同一个目录，或者手动指定 docker-compose.yml。
-
-# --- 启动 docker 容器 ---
-# 启动 docker-compose
-docker compose up -d
-
-# 查看日志
-docker logs -f xiaohongshu-mcp
-
-# 或者
-docker compose logs -f
+AUTH_TOKEN=replace-with-a-strong-random-value \
+  docker compose -f docker/docker-compose.yml up --build -d
 ```
 
-查看日志，下面表示成功启动。
+客户端随后必须发送：
 
-<img width="1012" height="98" alt="image" src="https://github.com/user-attachments/assets/c374f112-a5b5-4cf6-bd9f-080252079b10" />
-
-
-```bash
-# 停止 docker-compose
-docker compose stop
-
-# 查看实时日志
-docker logs -f xiaohongshu-mcp
-
-# 进入容器
-docker exec -it xiaohongshu-mcp bash
-
-# 手动更新容器
-docker compose pull && docker compose up -d
+```text
+Authorization: Bearer <token>
 ```
 
-## 3. 使用 MCP-Inspector 进行连接
+## 代理
 
-**注意 IP 换成你自己的 IP**
-
-<img width="2606" height="1164" alt="image" src="https://github.com/user-attachments/assets/495916ad-0643-491d-ae3c-14cbf431c16f" />
-
-对应的 Docker 日志一切正常。
-
-<img width="1662" height="458" alt="image" src="https://github.com/user-attachments/assets/309c2dab-51c4-4502-a41b-cdd4a3dd57ac" />
-
-## 4. 配置代理（可选）
-
-如果需要通过代理访问小红书，可以通过 `XHS_PROXY` 环境变量配置。
-
-### 使用 docker run
-
-```bash
-docker run -e XHS_PROXY=http://user:pass@proxy:port xpzouying/xiaohongshu-mcp
-```
-
-### 使用 docker-compose
-
-在 `docker-compose.yml` 的 `environment` 中添加 `XHS_PROXY`：
+如需代理，可在 `docker/docker-compose.yml` 的 `environment` 中增加：
 
 ```yaml
-environment:
-  - COOKIES_PATH=/app/data/cookies.json
-  - HOME=/app/data/home
-  - XDG_CONFIG_HOME=/app/data/config
-  - XHS_PROXY=http://user:pass@proxy:port
+- XHS_PROXY=http://user:pass@proxy:port
 ```
 
-支持 HTTP/HTTPS/SOCKS5 代理。日志中会自动隐藏代理的认证信息，输出示例：
+支持 HTTP、HTTPS 和 SOCKS5。不要把带认证信息的代理地址提交到仓库。
 
-```
-Using proxy: http://***:***@proxy:port
-```
+## 风险
 
-## 5. 配置访问鉴权（可选）
-
-不设置或设置为空时，鉴权默认关闭。生产环境建议通过 `AUTH_TOKEN` 环境变量配置访问令牌。
-
-### 使用 docker run
-
-```bash
-docker run -e AUTH_TOKEN=your-secret-token -p 18060:18060 xpzouying/xiaohongshu-mcp
-```
-
-### 使用 docker compose
-
-```bash
-AUTH_TOKEN=your-secret-token docker compose up -d
-```
-
-Compose 通过 `${AUTH_TOKEN:-}` 读取宿主环境变量。启用鉴权后，所有 MCP 客户端请求都必须带上自定义请求头：`Authorization: Bearer <token>`。
-
-## 6. 扫码登录
-
-1. **重要**，一定要先把 App 提前打开，准备扫码登录。
-2. 尽快扫码，有可能二维码会过期。
-
-打开 MCP-Inspector 获取二维码和进行扫码。
-
-<img width="2632" height="1468" alt="image" src="https://github.com/user-attachments/assets/543a5427-50e3-4970-b942-5d05d69596f4" />
-
-<img width="2624" height="1222" alt="image" src="https://github.com/user-attachments/assets/4f38ca81-1014-4874-ab4d-baf02b750b55" />
-
-扫码成功后，再次扫码后，就会提示已经完成登录了。
-
-<img width="2614" height="994" alt="image" src="https://github.com/user-attachments/assets/5356914a-3241-4bfd-b6b2-49c1cc5e3394" />
+自动化操作可能导致账号功能受限或封禁。建议使用专门测试账号先完成真实验收，使用者自行承担相关风险。

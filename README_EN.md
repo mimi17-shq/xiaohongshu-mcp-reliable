@@ -46,10 +46,16 @@ Video publishing currently keeps the upstream synchronous behavior.
 Go 1.24 or newer is required. See the [upstream documentation](https://github.com/xpzouying/xiaohongshu-mcp) for complete Docker, client, and login instructions.
 
 ```bash
-git clone <your-fork-url>
+git clone https://github.com/mimi17-shq/xiaohongshu-mcp-reliable.git
 cd xiaohongshu-mcp-reliable
 go build -o xiaohongshu-mcp .
 ./xiaohongshu-mcp -headless=false
+```
+
+You can also build this fork's Docker image from source. This project does not currently publish prebuilt images, which prevents users from accidentally running the upstream image instead of the reliability fork:
+
+```bash
+docker compose -f docker/docker-compose.yml up --build -d
 ```
 
 The service listens on `:18060` by default. Its Streamable HTTP MCP endpoint is:
