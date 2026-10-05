@@ -1,0 +1,9 @@
+Xiaohongshu MCP Reliable
+Copyright 2025 xpzouying and contributors for the upstream work.
+
+This product includes software derived from xpzouying/xiaohongshu-mcp:
+https://github.com/xpzouying/xiaohongshu-mcp
+
+The derivative work adds reliability, idempotency, task persistence,
+reply-verification, browser-serialization, and response-slimming changes.
+See CHANGES_FROM_UPSTREAM.md for details.
