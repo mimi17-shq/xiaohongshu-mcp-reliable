@@ -9,6 +9,8 @@
 
 [English](README_EN.md) · [与上游的详细差异](CHANGES_FROM_UPSTREAM.md) · [上游文档](https://github.com/xpzouying/xiaohongshu-mcp)
 
+📌 **[中文产品案例：如何让 AI Agent 的写操作更可靠](docs/PRODUCT_CASE_ZH.md)**
+
 ## 为什么做这个分支
 
 浏览器自动化的失败并不总等于操作没有发生。比如提交按钮已经生效，但客户端在看到成功提示前超时；如果 Agent 把超时直接当失败并重试，就可能产生重复内容。
