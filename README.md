@@ -9,7 +9,11 @@
 
 [English](README_EN.md) · [与上游的详细差异](CHANGES_FROM_UPSTREAM.md) · [上游文档](https://github.com/xpzouying/xiaohongshu-mcp)
 
-📌 **[中文产品案例：如何让 AI Agent 的写操作更可靠](docs/PRODUCT_CASE_ZH.md)**
+## 产品视角
+
+我从真实的发布超时与评论回复问题出发，提出并定义了异步任务、幂等去重、不确定状态、精确评论定位和浏览器串行等产品规则，降低 AI Agent 重复发布、重复评论与回复错楼的风险。
+
+我负责提出需求、确定产品方案与验收结果；代码实现和自动化测试由 AI 完成。完整过程见 **[中文产品案例：如何让 AI Agent 的写操作更可靠](docs/PRODUCT_CASE_ZH.md)**。
 
 ## 为什么做这个分支
 
